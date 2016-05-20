@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Threading;
 using Excel = Microsoft.Office.Interop.Excel;
-using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 
 namespace ExcelCloudAddIn
 {
     public partial class ThisAddIn
     {
-        private frmSettings addInSettings;
+        private FrmSettings addInSettings;
         private Microsoft.Office.Tools.CustomTaskPane addInSettingsPane;
 
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
-            addInSettings = new frmSettings();
+            addInSettings = new FrmSettings();
             addInSettingsPane = this.CustomTaskPanes.Add(addInSettings, "Cloud AddIn Settings");
             addInSettingsPane.DockPosition = Microsoft.Office.Core.MsoCTPDockPosition.msoCTPDockPositionRight;
             addInSettingsPane.Width = addInSettings.Size.Width + 330;
@@ -34,10 +33,8 @@ namespace ExcelCloudAddIn
             }
         }
 
-        public void SubmitTask(String host, int port, String requestQuery)
+        public void SubmitTask(String requestQuery)
         {
-
-
             /*new AsyncConnection();
             AsyncConnection.StartClient(host, port);
 
@@ -78,8 +75,6 @@ namespace ExcelCloudAddIn
                 {
                     Console.WriteLine("JsonReader Exception: " + jre.ToString());
                 }
-
-
             }
 
             // Display the task completion notification

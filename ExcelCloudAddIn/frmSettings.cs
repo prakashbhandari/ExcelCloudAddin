@@ -7,18 +7,20 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
-using Newtonsoft.Json;
+using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace ExcelCloudAddIn
 {
-    public partial class frmSettings : UserControl
+    public partial class FrmSettings : UserControl
     {
         Excel.Range inputRange;
         Excel.Range outputRange;
-        OpenFileDialog ofd = new OpenFileDialog();
-        Job request;
 
-        public frmSettings()
+        OpenFileDialog ofd = new OpenFileDialog();
+        Job job = new Job();
+
+        public FrmSettings()
         {
             InitializeComponent();
         }
@@ -41,24 +43,6 @@ namespace ExcelCloudAddIn
             }
         }
 
-        private void checkBoxAneka_CheckedChanged(object sender, EventArgs e)
-        {
-            if (this.checkBoxAneka.Checked == true)
-            {
-                this.txtAnekaMaster.Enabled = true;
-                this.numericAnekaServicePort.Enabled = true;
-                this.txtAnekaUsername.Enabled = true;
-                this.txtAnekaPassword.Enabled = true;
-            }
-            else
-            {
-                this.txtAnekaMaster.Enabled = false;
-                this.numericAnekaServicePort.Enabled = false;
-                this.txtAnekaUsername.Enabled = false;
-                this.txtAnekaPassword.Enabled = false;
-            }
-        }
-
         private void btnAddTask_Click(object sender, EventArgs e)
         {
             if (ofd.ShowDialog() == DialogResult.OK)
@@ -77,71 +61,103 @@ namespace ExcelCloudAddIn
 
         private void btnRun_Click(object sender, EventArgs e)
         {
-            if (this.txtInputCells.Text.Equals("") || this.txtOutputCells.Text.Equals("") || this.txtServer.Text.Equals("") || this.numericPort.Value.ToString().Equals(""))
+            if (IsFrmValid())
             {
-                this.setNotification(0);
+                this.ConfigureJob();
+                this.job.SubmitJob();
+            }
+        }
+
+        public bool IsFrmValid()
+        {
+            if (this.txtInputCells.Text == string.Empty
+                || this.txtOutputCells.Text == string.Empty
+                || this.comboInputType.SelectedIndex == -1
+                || this.comboJobExecution.SelectedIndex == -1
+                || this.txtHost.Text == string.Empty
+                || this.numericPort.Value <= 0
+                || this.txtUsername.Text == string.Empty
+                || this.txtPassword.Text == string.Empty)
+            {
+                this.SetNotification(0);
+                return false;
             }
             else
             {
-                this.configureJob();
-                this.setNotification(1);
-
-                String requestQuery = JsonConvert.SerializeObject(request);
-                Globals.ThisAddIn.SubmitTask(this.txtServer.Text, Decimal.ToInt32(this.numericPort.Value), requestQuery);
+                return true;
             }
         }
 
-        public void configureJob()
+        // Summary:
+        //     Assign 
+        //
+        // Returns:
+        //     
+        public void ConfigureJob()
         {
-            request = new Job();
-            // Set Job details for the request
-            Excel.Range inputParam;
-            for (int i = 1; i <= inputRange.Count; i++)
+            try
             {
-                inputParam = (Excel.Range)inputRange.Item[i];
-                request.inputData.Add(inputParam.Value2 == null ? "0" : inputParam.Value2.ToString());
-            }
-
-            foreach (DataGridViewRow dr in this.dataGridTask.Rows)
-            {
-                if (dr.Cells["taskPath"].Value != null)
+                this.SetNotification(1);
+                // Set Job details
+                Excel.Range inputParam;
+                for (int i = 1; i <= inputRange.Count; i++)
                 {
-                    request.task.Add(dr.Cells["taskPath"].Value.ToString());
+                    inputParam = (Excel.Range)inputRange.Item[i];
+                    job.inputDatas.Add(inputParam.Value2 == null ? "0" : inputParam.Value2.ToString());
                 }
-            }
-            request.inputType = this.inputType.Text;
-            request.jobExecution = this.jobExecution.Text;
 
-            // Set Server details for the request
-            request.libraryDir = this.txtLibraryDir.Text;
-            // Aneka Details
-            request.usingAneka = this.checkBoxAneka.Checked;
-            if (this.checkBoxAneka.Checked == true)
+                foreach (DataGridViewRow dr in this.dataGridTask.Rows)
+                {
+                    if (dr.Cells["taskPath"].Value != null)
+                    {
+                        job.tasks.Add(dr.Cells["taskPath"].Value.ToString());
+                    }
+                }
+                job.inputType = this.comboInputType.Text;
+                job.jobExecution = this.comboJobExecution.Text;
+                job.numRows = inputRange.Rows.Count;
+                job.numColumns = inputRange.Columns.Count;
+
+                // Set Server details
+                job.usingAneka = this.checkBoxAneka.Checked;
+                job.serverDetails["host"] = this.txtHost.Text;
+                job.serverDetails["port"] = Regex.Match((string)this.numericPort.Value.ToString(), @"\d+").Value;
+                job.serverDetails["username"] = this.txtUsername.Text;
+                job.serverDetails["password"] = this.txtPassword.Text;
+                
+                // Set Excel details
+                job.outputRange = outputRange;
+                Trace.WriteLine("Job Configured");
+            }
+            catch (Exception e)
             {
-                request.anekaDetails["host"] = this.txtAnekaMaster.Text;
-                request.anekaDetails["port"] = this.numericAnekaServicePort.Value.ToString();
-                request.anekaDetails["username"] = this.txtAnekaUsername.Text;
-                request.anekaDetails["password"] = this.txtAnekaPassword.Text;
+                Trace.WriteLine(e.ToString());
             }
         }
+        
 
-        public void setNotification(int status)
+        public void SetNotification(int status)
         {
             switch (status)
             {
-                // Error in form
                 case 0:
                     this.lblNotification.ForeColor = System.Drawing.Color.Red;
                     this.lblNotification.Text = "Please fill all the fields before submitting task";
                     break;
-                // Task submitted
                 case 1:
-                    this.lblNotification.ForeColor = System.Drawing.Color.Green;
-                    this.lblNotification.Text = "Submitting task to server...";
+                    this.lblNotification.ForeColor = System.Drawing.Color.Blue;
+                    this.lblNotification.Text = "Configuring job...";
                     break;
-                // Task completed successfully
                 case 2:
                     this.lblNotification.ForeColor = System.Drawing.Color.Blue;
+                    this.lblNotification.Text = "Submitting tasks...";
+                    break;
+                case 3:
+                    this.lblNotification.ForeColor = System.Drawing.Color.Green;
+                    this.lblNotification.Text = "Running tasks...";
+                    break;
+                case 4:
+                    this.lblNotification.ForeColor = System.Drawing.Color.Green;
                     this.lblNotification.Text = "Task completed succesfully";
                     break;
             }
