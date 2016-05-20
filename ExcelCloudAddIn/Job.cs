@@ -79,7 +79,7 @@ namespace ExcelCloudAddIn
                             args = String.Empty;
                             for (int j = 0; j < numParams; j++)
                             {
-                                args += (jobExecution.Equals("Row based")) ? inputDatas[(i * numParams) + j] + " " : inputDatas[(j * numParams) + i] + " ";
+                                args += (jobExecution.Equals("Row based")) ? inputDatas[(i * numParams) + j] + " " : inputDatas[(j * numTasks) + i] + " ";
                             }
                             Trace.WriteLine("Submitting task: " + task + "\nTask Count: " + numTasks + "\nParams: " + numParams + "\nArgs: "+args);
                             AnekaExecutor anekaExecutor = new AnekaExecutor(task, args);

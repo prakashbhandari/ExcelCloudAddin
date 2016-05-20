@@ -35,7 +35,7 @@
         {
             this.tab1 = new Microsoft.Office.Tools.Ribbon.RibbonTab();
             this.group1 = new Microsoft.Office.Tools.Ribbon.RibbonGroup();
-            this.toggleButton1 = new Microsoft.Office.Tools.Ribbon.RibbonToggleButton();
+            this.toggleExcelCloud = new Microsoft.Office.Tools.Ribbon.RibbonToggleButton();
             this.tab1.SuspendLayout();
             this.group1.SuspendLayout();
             this.SuspendLayout();
@@ -49,15 +49,16 @@
             // 
             // group1
             // 
-            this.group1.Items.Add(this.toggleButton1);
+            this.group1.Items.Add(this.toggleExcelCloud);
             this.group1.Label = "group1";
             this.group1.Name = "group1";
             // 
-            // toggleButton1
+            // toggleExcelCloud
             // 
-            this.toggleButton1.Label = "toggleButton1";
-            this.toggleButton1.Name = "toggleButton1";
-            this.toggleButton1.Click += new System.EventHandler<Microsoft.Office.Tools.Ribbon.RibbonControlEventArgs>(this.toggleButton1_Click);
+            this.toggleExcelCloud.Checked = true;
+            this.toggleExcelCloud.Label = "Show/Hide ExcelCloud";
+            this.toggleExcelCloud.Name = "toggleExcelCloud";
+            this.toggleExcelCloud.Click += new System.EventHandler<Microsoft.Office.Tools.Ribbon.RibbonControlEventArgs>(this.toggleExcelCloud_Click);
             // 
             // ManageTaskPaneRibbon
             // 
@@ -77,7 +78,7 @@
 
         internal Microsoft.Office.Tools.Ribbon.RibbonTab tab1;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup group1;
-        internal Microsoft.Office.Tools.Ribbon.RibbonToggleButton toggleButton1;
+        internal Microsoft.Office.Tools.Ribbon.RibbonToggleButton toggleExcelCloud;
     }
 
     partial class ThisRibbonCollection : Microsoft.Office.Tools.Ribbon.RibbonReadOnlyCollection

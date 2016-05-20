@@ -22,7 +22,7 @@ namespace ExcelCloudAddIn
 
         private void addInSettings_VisibleChanged(object sender, EventArgs e)
         {
-            Globals.Ribbons.ManageTaskPaneRibbon.toggleButton1.Checked = addInSettingsPane.Visible;
+            Globals.Ribbons.ManageTaskPaneRibbon.toggleExcelCloud.Checked = addInSettingsPane.Visible;
         }
 
         public Microsoft.Office.Tools.CustomTaskPane TaskPane

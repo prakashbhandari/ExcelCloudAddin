@@ -18,7 +18,7 @@ namespace ExcelCloudAddIn
         Excel.Range outputRange;
 
         OpenFileDialog ofd = new OpenFileDialog();
-        Job job = new Job();
+        Job job;
 
         public FrmSettings()
         {
@@ -63,7 +63,9 @@ namespace ExcelCloudAddIn
         {
             if (IsFrmValid())
             {
-                this.ConfigureJob();
+                this.job = new Job();
+                this.PrepareJob();
+                this.SetNotification(2);
                 this.job.SubmitJob();
             }
         }
@@ -93,7 +95,7 @@ namespace ExcelCloudAddIn
         //
         // Returns:
         //     
-        public void ConfigureJob()
+        public void PrepareJob()
         {
             try
             {
@@ -146,7 +148,7 @@ namespace ExcelCloudAddIn
                     break;
                 case 1:
                     this.lblNotification.ForeColor = System.Drawing.Color.Blue;
-                    this.lblNotification.Text = "Configuring job...";
+                    this.lblNotification.Text = "Preparing job...";
                     break;
                 case 2:
                     this.lblNotification.ForeColor = System.Drawing.Color.Blue;
@@ -154,11 +156,11 @@ namespace ExcelCloudAddIn
                     break;
                 case 3:
                     this.lblNotification.ForeColor = System.Drawing.Color.Green;
-                    this.lblNotification.Text = "Running tasks...";
+                    this.lblNotification.Text = "Task completed succesfully";
                     break;
                 case 4:
-                    this.lblNotification.ForeColor = System.Drawing.Color.Green;
-                    this.lblNotification.Text = "Task completed succesfully";
+                    this.lblNotification.ForeColor = System.Drawing.Color.Red;
+                    this.lblNotification.Text = "Error Encountered. Check log for more information...";
                     break;
             }
         }
