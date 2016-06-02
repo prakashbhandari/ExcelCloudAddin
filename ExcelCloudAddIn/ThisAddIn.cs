@@ -13,7 +13,7 @@ namespace ExcelCloudAddIn
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
             addInSettings = new FrmSettings();
-            addInSettingsPane = this.CustomTaskPanes.Add(addInSettings, "Cloud AddIn Settings");
+            addInSettingsPane = this.CustomTaskPanes.Add(addInSettings, "ExcelCloud AddIn Settings");
             addInSettingsPane.DockPosition = Microsoft.Office.Core.MsoCTPDockPosition.msoCTPDockPositionRight;
             addInSettingsPane.Width = addInSettings.Size.Width + 330;
             addInSettingsPane.Visible = true;

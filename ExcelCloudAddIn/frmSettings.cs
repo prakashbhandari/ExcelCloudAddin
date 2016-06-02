@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Text.RegularExpressions;
@@ -17,12 +18,14 @@ namespace ExcelCloudAddIn
         Excel.Range inputRange;
         Excel.Range outputRange;
 
-        OpenFileDialog ofd = new OpenFileDialog();
-        Job job;
+        private static FrmSettings frmSettings = null;
+        private static OpenFileDialog ofd = new OpenFileDialog();
+        private static Job job;
 
         public FrmSettings()
         {
             InitializeComponent();
+            frmSettings = this;
         }
 
         private void btnSelectInputCells_Click(object sender, EventArgs e)
@@ -53,20 +56,24 @@ namespace ExcelCloudAddIn
 
         private void btnRemoveTask_Click(object sender, EventArgs e)
         {
-            foreach (DataGridViewRow item in this.dataGridTask.SelectedRows)
+            foreach (DataGridViewCell cell in this.dataGridTask.SelectedCells)
             {
-                this.dataGridTask.Rows.RemoveAt(item.Index);
+                if (cell.Selected)
+                {
+                    this.dataGridTask.Rows.RemoveAt(cell.RowIndex);
+                }
             }
         }
 
         private void btnRun_Click(object sender, EventArgs e)
         {
+            this.lblNotification.Text = "";
+
             if (IsFrmValid())
             {
-                this.job = new Job();
-                this.PrepareJob();
-                this.SetNotification(2);
-                this.job.SubmitJob();
+                job = new Job();
+                PrepareJob();
+                job.SubmitJob();
             }
         }
 
@@ -74,14 +81,13 @@ namespace ExcelCloudAddIn
         {
             if (this.txtInputCells.Text == string.Empty
                 || this.txtOutputCells.Text == string.Empty
-                || this.comboInputType.SelectedIndex == -1
                 || this.comboJobExecution.SelectedIndex == -1
                 || this.txtHost.Text == string.Empty
                 || this.numericPort.Value <= 0
                 || this.txtUsername.Text == string.Empty
                 || this.txtPassword.Text == string.Empty)
             {
-                this.SetNotification(0);
+                SetStatus(0);
                 return false;
             }
             else
@@ -99,7 +105,7 @@ namespace ExcelCloudAddIn
         {
             try
             {
-                this.SetNotification(1);
+                SetStatus(1);
                 // Set Job details
                 Excel.Range inputParam;
                 for (int i = 1; i <= inputRange.Count; i++)
@@ -112,13 +118,12 @@ namespace ExcelCloudAddIn
                 {
                     if (dr.Cells["taskPath"].Value != null)
                     {
-                        job.tasks.Add(dr.Cells["taskPath"].Value.ToString());
+                        job.tasks[dr.Cells["taskName"].Value.ToString()] = dr.Cells["taskPath"].Value.ToString();
                     }
                 }
-                job.inputType = this.comboInputType.Text;
                 job.jobExecution = this.comboJobExecution.Text;
-                job.numRows = inputRange.Rows.Count;
-                job.numColumns = inputRange.Columns.Count;
+                job.numTasks = (this.comboJobExecution.Text.Equals("Row based")) ? inputRange.Rows.Count : inputRange.Columns.Count;
+                job.numParams = (this.comboJobExecution.Text.Equals("Row based")) ? inputRange.Columns.Count : inputRange.Rows.Count;
 
                 // Set Server details
                 job.usingAneka = this.checkBoxAneka.Checked;
@@ -138,30 +143,85 @@ namespace ExcelCloudAddIn
         }
         
 
-        public void SetNotification(int status)
+        public static void SetStatus(int status)
         {
             switch (status)
             {
                 case 0:
-                    this.lblNotification.ForeColor = System.Drawing.Color.Red;
-                    this.lblNotification.Text = "Please fill all the fields before submitting task";
+                    frmSettings.lblNotification.ForeColor = System.Drawing.Color.Red;
+                    frmSettings.lblNotification.Text = "Please fill all the fields before submitting task";
                     break;
                 case 1:
-                    this.lblNotification.ForeColor = System.Drawing.Color.Blue;
-                    this.lblNotification.Text = "Preparing job...";
+                    frmSettings.lblNotification.ForeColor = System.Drawing.Color.Blue;
+                    frmSettings.lblNotification.Text = "Preparing job...";
                     break;
                 case 2:
-                    this.lblNotification.ForeColor = System.Drawing.Color.Blue;
-                    this.lblNotification.Text = "Submitting tasks...";
+                    frmSettings.lblNotification.ForeColor = System.Drawing.Color.Blue;
+                    frmSettings.lblNotification.Text = "Running job...";
+                    // Progressbar can be shown only after the job has been prepared
+                    ToggleProgress(true);
                     break;
                 case 3:
-                    this.lblNotification.ForeColor = System.Drawing.Color.Green;
-                    this.lblNotification.Text = "Task completed succesfully";
+                    frmSettings.lblNotification.ForeColor = System.Drawing.Color.Green;
+                    frmSettings.lblNotification.Text = "Job completed succesfully";
+                    if (frmSettings.progressBarTask.Value == frmSettings.progressBarTask.Maximum)
+                    {
+                        // Wait 1 second for the progressbar animation 
+                        // to finish loading completely
+                        System.Threading.Thread.Sleep(1000);
+                        ToggleProgress(false);
+                    }
                     break;
                 case 4:
-                    this.lblNotification.ForeColor = System.Drawing.Color.Red;
-                    this.lblNotification.Text = "Error Encountered. Check log for more information...";
+                    frmSettings.lblNotification.ForeColor = System.Drawing.Color.Red;
+                    frmSettings.lblNotification.Text = "Error Encountered. Check log for more information...";
+                    ToggleProgress(false);
                     break;
+                case 5:
+                    frmSettings.lblNotification.ForeColor = System.Drawing.Color.Red;
+                    frmSettings.lblNotification.Text = "Error Encountered. Could not connect to server...";
+                    ToggleProgress(false);
+                    break;
+            }
+        }
+
+        public static void UpdateProgress()
+        {
+            frmSettings.progressBarTask.PerformStep();
+
+            /*String percentageComplete = (((frmSettings.progressBarTask.Value -1) * 100) / frmSettings.progressBarTask.Maximum) + "%";
+            frmSettings.progressBarTask.CreateGraphics().DrawString(
+                percentageComplete,
+                new Font("Microsoft Sans Serif",
+                (float)9.00, FontStyle.Regular),
+                Brushes.Red,
+                new PointF(frmSettings.progressBarTask.Width / 2 - 10, frmSettings.progressBarTask.Height / 2 - 7));*/
+        }
+
+        public static void ToggleProgress(bool enable)
+        {
+            if (enable)
+            {
+                // Reset the progressbar
+                frmSettings.progressBarTask.Visible = true;
+                frmSettings.progressBarTask.Minimum = 1;
+                // To display job preparation and communication as some part of progress
+                // add total progressbar value  as one more than total tasks
+                frmSettings.progressBarTask.Maximum = job.numTasks + 1;
+                frmSettings.progressBarTask.Step = 1;
+                frmSettings.progressBarTask.Value = 2;
+
+                // Disable the form and Run button
+                frmSettings.tabSettings.Enabled = false;
+                frmSettings.btnRun.Enabled = false;
+            }
+            else
+            {
+                // Once progress completed enable the forma
+                // and display the Run button
+                frmSettings.progressBarTask.Visible = false;
+                frmSettings.tabSettings.Enabled = true;
+                frmSettings.btnRun.Enabled = true;
             }
         }
     }

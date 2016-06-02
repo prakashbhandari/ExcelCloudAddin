@@ -38,8 +38,6 @@
             this.btnRemoveTask = new System.Windows.Forms.Button();
             this.comboJobExecution = new System.Windows.Forms.ComboBox();
             this.lblJobExecution = new System.Windows.Forms.Label();
-            this.comboInputType = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.lblTask = new System.Windows.Forms.Label();
             this.btnAddTask = new System.Windows.Forms.Button();
             this.lblInputCells = new System.Windows.Forms.Label();
@@ -58,6 +56,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.numericPort = new System.Windows.Forms.NumericUpDown();
+            this.progressBarTask = new System.Windows.Forms.ProgressBar();
             this.btnRun = new System.Windows.Forms.Button();
             this.tabSettings.SuspendLayout();
             this.tabJobDetails.SuspendLayout();
@@ -71,18 +70,18 @@
             // 
             this.lblNotification.AutoSize = true;
             this.lblNotification.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblNotification.Location = new System.Drawing.Point(15, 11);
+            this.lblNotification.Location = new System.Drawing.Point(21, 16);
             this.lblNotification.Name = "lblNotification";
-            this.lblNotification.Size = new System.Drawing.Size(210, 16);
+            this.lblNotification.Size = new System.Drawing.Size(172, 16);
             this.lblNotification.TabIndex = 21;
-            this.lblNotification.Text = "Please enter details and click Run";
+            this.lblNotification.Text = "Fill the details and click Run";
             // 
             // tabSettings
             // 
             this.tabSettings.Appearance = System.Windows.Forms.TabAppearance.Buttons;
             this.tabSettings.Controls.Add(this.tabJobDetails);
             this.tabSettings.Controls.Add(this.tabServerDetails);
-            this.tabSettings.Location = new System.Drawing.Point(18, 39);
+            this.tabSettings.Location = new System.Drawing.Point(18, 45);
             this.tabSettings.Name = "tabSettings";
             this.tabSettings.SelectedIndex = 0;
             this.tabSettings.Size = new System.Drawing.Size(279, 380);
@@ -111,8 +110,6 @@
             this.groupBoxTask.Controls.Add(this.btnRemoveTask);
             this.groupBoxTask.Controls.Add(this.comboJobExecution);
             this.groupBoxTask.Controls.Add(this.lblJobExecution);
-            this.groupBoxTask.Controls.Add(this.comboInputType);
-            this.groupBoxTask.Controls.Add(this.label1);
             this.groupBoxTask.Controls.Add(this.lblTask);
             this.groupBoxTask.Controls.Add(this.btnAddTask);
             this.groupBoxTask.Location = new System.Drawing.Point(14, 108);
@@ -131,7 +128,7 @@
             this.dataGridTask.Location = new System.Drawing.Point(10, 40);
             this.dataGridTask.Name = "dataGridTask";
             this.dataGridTask.RowHeadersVisible = false;
-            this.dataGridTask.Size = new System.Drawing.Size(224, 77);
+            this.dataGridTask.Size = new System.Drawing.Size(224, 131);
             this.dataGridTask.TabIndex = 39;
             // 
             // taskName
@@ -176,27 +173,6 @@
             this.lblJobExecution.Size = new System.Drawing.Size(74, 13);
             this.lblJobExecution.TabIndex = 36;
             this.lblJobExecution.Text = "Job Execution";
-            // 
-            // comboInputType
-            // 
-            this.comboInputType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboInputType.FormattingEnabled = true;
-            this.comboInputType.Items.AddRange(new object[] {
-            "Parameter",
-            "File"});
-            this.comboInputType.Location = new System.Drawing.Point(10, 145);
-            this.comboInputType.Name = "comboInputType";
-            this.comboInputType.Size = new System.Drawing.Size(134, 21);
-            this.comboInputType.TabIndex = 35;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 123);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(58, 13);
-            this.label1.TabIndex = 34;
-            this.label1.Text = "Input Type";
             // 
             // lblTask
             // 
@@ -291,8 +267,6 @@
             // checkBoxAneka
             // 
             this.checkBoxAneka.AutoSize = true;
-            this.checkBoxAneka.Checked = true;
-            this.checkBoxAneka.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxAneka.Location = new System.Drawing.Point(15, 6);
             this.checkBoxAneka.Name = "checkBoxAneka";
             this.checkBoxAneka.Size = new System.Drawing.Size(93, 17);
@@ -305,7 +279,7 @@
             this.txtPassword.Location = new System.Drawing.Point(13, 199);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
-            this.txtPassword.Size = new System.Drawing.Size(100, 20);
+            this.txtPassword.Size = new System.Drawing.Size(158, 20);
             this.txtPassword.TabIndex = 29;
             this.txtPassword.Text = "prakash191";
             // 
@@ -339,7 +313,7 @@
             // 
             this.txtUsername.Location = new System.Drawing.Point(15, 150);
             this.txtUsername.Name = "txtUsername";
-            this.txtUsername.Size = new System.Drawing.Size(110, 20);
+            this.txtUsername.Size = new System.Drawing.Size(156, 20);
             this.txtUsername.TabIndex = 27;
             this.txtUsername.Text = "prakashbhandari";
             // 
@@ -373,15 +347,27 @@
             this.numericPort.Size = new System.Drawing.Size(93, 20);
             this.numericPort.TabIndex = 25;
             this.numericPort.Value = new decimal(new int[] {
-            9090,
+            9990,
             0,
             0,
             0});
             // 
+            // progressBarTask
+            // 
+            this.progressBarTask.Location = new System.Drawing.Point(22, 427);
+            this.progressBarTask.MarqueeAnimationSpeed = 0;
+            this.progressBarTask.Minimum = 1;
+            this.progressBarTask.Name = "progressBarTask";
+            this.progressBarTask.Size = new System.Drawing.Size(182, 23);
+            this.progressBarTask.Step = 1;
+            this.progressBarTask.TabIndex = 33;
+            this.progressBarTask.Value = 1;
+            this.progressBarTask.Visible = false;
+            // 
             // btnRun
             // 
             this.btnRun.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRun.Location = new System.Drawing.Point(228, 435);
+            this.btnRun.Location = new System.Drawing.Point(228, 427);
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(65, 23);
             this.btnRun.TabIndex = 32;
@@ -394,11 +380,12 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
+            this.Controls.Add(this.progressBarTask);
             this.Controls.Add(this.btnRun);
             this.Controls.Add(this.tabSettings);
             this.Controls.Add(this.lblNotification);
             this.Name = "FrmSettings";
-            this.Size = new System.Drawing.Size(316, 475);
+            this.Size = new System.Drawing.Size(316, 468);
             this.tabSettings.ResumeLayout(false);
             this.tabJobDetails.ResumeLayout(false);
             this.tabJobDetails.PerformLayout();
@@ -439,12 +426,11 @@
         private System.Windows.Forms.Button btnRemoveTask;
         private System.Windows.Forms.ComboBox comboJobExecution;
         private System.Windows.Forms.Label lblJobExecution;
-        private System.Windows.Forms.ComboBox comboInputType;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lblTask;
         private System.Windows.Forms.Button btnAddTask;
         private System.Windows.Forms.DataGridView dataGridTask;
         private System.Windows.Forms.DataGridViewTextBoxColumn taskName;
         private System.Windows.Forms.DataGridViewTextBoxColumn taskPath;
+        private System.Windows.Forms.ProgressBar progressBarTask;
     }
 }

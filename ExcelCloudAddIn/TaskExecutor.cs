@@ -6,17 +6,17 @@ using System.Text.RegularExpressions;
 namespace ExcelCloudAddIn
 {
     [Serializable]
-    public class AnekaExecutor : ITask
+    public class TaskExecutor : ITask
     {
         /// <summary>
         /// Gets, sets the task ID for each execution
         /// </summary>
-        public int taskID { get; set; }
+        public int taskID;
 
-        private String task, args;
+        public String task, args;
         public string result;
 
-        public AnekaExecutor(String task, String args) { this.task = task; this.args = args; }
+        public TaskExecutor(String task, String args) { this.task = task; this.args = args; }
 
         public void Execute()
         {
@@ -38,12 +38,7 @@ namespace ExcelCloudAddIn
                 while (!proc.StandardOutput.EndOfStream)
                 {
                     result = proc.StandardOutput.ReadLine();
-                    Trace.WriteLine(result);
-                }
-                while (proc.StandardError.EndOfStream)
-                {
-                    string line = proc.StandardError.ReadLine();
-                    Trace.WriteLine(line);
+                    Debug.WriteLine(result);
                 }
             }
             catch (Exception e)

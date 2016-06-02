@@ -10,7 +10,7 @@ using Microsoft.Office.Tools.Excel;
 [assembly: AssemblyTitle("ExcelCloudAddIn")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Prakash Bhandari")]
 [assembly: AssemblyProduct("ExcelCloudAddIn")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
