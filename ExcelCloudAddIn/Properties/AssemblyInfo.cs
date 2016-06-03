@@ -2,7 +2,6 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
-using Microsoft.Office.Tools.Excel;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -10,7 +9,7 @@ using Microsoft.Office.Tools.Excel;
 [assembly: AssemblyTitle("ExcelCloudAddIn")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Prakash Bhandari")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ExcelCloudAddIn")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
@@ -22,7 +21,7 @@ using Microsoft.Office.Tools.Excel;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("1a64ca3e-ab48-4ee3-bfe7-e70e7ee1ef83")]
+[assembly: Guid("ffefa27a-0c8f-4c88-9ed1-7ab021a23b22")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -37,13 +36,3 @@ using Microsoft.Office.Tools.Excel;
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
-// 
-// The ExcelLocale1033 attribute controls the locale that is passed to the Excel
-// object model. Setting ExcelLocale1033 to true causes the Excel object model to 
-// act the same in all locales, which matches the behavior of Visual Basic for 
-// Applications. Setting ExcelLocale1033 to false causes the Excel object model to
-// act differently when users have different locale settings, which matches the 
-// behavior of Visual Studio Tools for Office, Version 2003. This can cause unexpected 
-// results in locale-sensitive information such as formula names and date formats.
-// 
-[assembly: ExcelLocale1033(true)]

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
@@ -9,7 +7,7 @@ using System.Diagnostics;
 
 namespace ExcelCloudAddIn
 {
-    class AddinService
+    class AsyncConnection
     {
         public static ManualResetEvent connectDone = new ManualResetEvent(false);
         public static ManualResetEvent sendDone = new ManualResetEvent(false);
@@ -39,7 +37,6 @@ namespace ExcelCloudAddIn
 
                 // Connect to the server
                 client.BeginConnect(remoteEP, new AsyncCallback(ConnectCallback), client);
-                connectDone.WaitOne();
             }
             catch (Exception e)
             {
@@ -134,9 +131,9 @@ namespace ExcelCloudAddIn
                     receiveDone.Set();
                 }
             }
-            catch (Exception e)
+            catch (ObjectDisposedException ode)
             {
-                Debug.WriteLine(e.ToString());
+                //Debug.WriteLine(e.ToString());
             }
         }
 

@@ -51,6 +51,7 @@ namespace ExcelCloudAddIn
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 this.dataGridTask.Rows.Add(ofd.SafeFileName, ofd.FileName);
+                this.txtLibraryDir.Text = ofd.FileName.Replace(ofd.SafeFileName, "");
             }
         }
 
@@ -63,6 +64,11 @@ namespace ExcelCloudAddIn
                     this.dataGridTask.Rows.RemoveAt(cell.RowIndex);
                 }
             }
+        }
+
+        private void checkBoxAneka_CheckedChanged(object sender, EventArgs e)
+        {
+            this.groupBoxAneka.Enabled = this.checkBoxAneka.Checked;
         }
 
         private void btnRun_Click(object sender, EventArgs e)
@@ -84,14 +90,23 @@ namespace ExcelCloudAddIn
                 || this.comboJobExecution.SelectedIndex == -1
                 || this.txtHost.Text == string.Empty
                 || this.numericPort.Value <= 0
-                || this.txtUsername.Text == string.Empty
-                || this.txtPassword.Text == string.Empty)
+                || this.txtLibraryDir.Text == string.Empty)
             {
                 SetStatus(0);
                 return false;
             }
             else
             {
+                if (this.checkBoxAneka.Checked &&
+                    (this.txtAnekaHost.Text == string.Empty
+                    || this.numericAnekaPort.Value <= 0
+                    || this.txtAnekaPassword.Text == string.Empty
+                    || this.txtAnekaPassword.Text == string.Empty)
+                )
+                {
+                    SetStatus(0);
+                    return false;
+                }
                 return true;
             }
         }
@@ -129,9 +144,14 @@ namespace ExcelCloudAddIn
                 job.usingAneka = this.checkBoxAneka.Checked;
                 job.serverDetails["host"] = this.txtHost.Text;
                 job.serverDetails["port"] = Regex.Match((string)this.numericPort.Value.ToString(), @"\d+").Value;
-                job.serverDetails["username"] = this.txtUsername.Text;
-                job.serverDetails["password"] = this.txtPassword.Text;
-                
+                job.serverDetails["libraryDir"] = this.txtLibraryDir.Text;
+
+                // Set Aneka details
+                job.anekaDetails["host"] = this.txtAnekaHost.Text;
+                job.anekaDetails["port"] = Regex.Match((string)this.numericAnekaPort.Value.ToString(), @"\d+").Value;
+                job.anekaDetails["username"] = this.txtAnekaUsername.Text;
+                job.anekaDetails["password"] = this.txtAnekaPassword.Text;
+
                 // Set Excel details
                 job.outputRange = outputRange;
                 Trace.WriteLine("Job Configured");
@@ -141,7 +161,7 @@ namespace ExcelCloudAddIn
                 Trace.WriteLine(e.ToString());
             }
         }
-        
+
 
         public static void SetStatus(int status)
         {
@@ -169,8 +189,8 @@ namespace ExcelCloudAddIn
                         // Wait 1 second for the progressbar animation 
                         // to finish loading completely
                         System.Threading.Thread.Sleep(1000);
-                        ToggleProgress(false);
                     }
+                    ToggleProgress(false);
                     break;
                 case 4:
                     frmSettings.lblNotification.ForeColor = System.Drawing.Color.Red;
@@ -188,14 +208,6 @@ namespace ExcelCloudAddIn
         public static void UpdateProgress()
         {
             frmSettings.progressBarTask.PerformStep();
-
-            /*String percentageComplete = (((frmSettings.progressBarTask.Value -1) * 100) / frmSettings.progressBarTask.Maximum) + "%";
-            frmSettings.progressBarTask.CreateGraphics().DrawString(
-                percentageComplete,
-                new Font("Microsoft Sans Serif",
-                (float)9.00, FontStyle.Regular),
-                Brushes.Red,
-                new PointF(frmSettings.progressBarTask.Width / 2 - 10, frmSettings.progressBarTask.Height / 2 - 7));*/
         }
 
         public static void ToggleProgress(bool enable)
@@ -207,7 +219,7 @@ namespace ExcelCloudAddIn
                 frmSettings.progressBarTask.Minimum = 1;
                 // To display job preparation and communication as some part of progress
                 // add total progressbar value  as one more than total tasks
-                frmSettings.progressBarTask.Maximum = job.numTasks + 1;
+                frmSettings.progressBarTask.Maximum = (job.numTasks * (frmSettings.dataGridTask.Rows.Count - 1)) + 1;
                 frmSettings.progressBarTask.Step = 1;
                 frmSettings.progressBarTask.Value = 2;
 

@@ -33,57 +33,6 @@ namespace ExcelCloudAddIn
             }
         }
 
-        public void SubmitTask(String requestQuery)
-        {
-            /*new AsyncConnection();
-            AsyncConnection.StartClient(host, port);
-
-            AsyncConnection.sendDone = new ManualResetEvent(false);
-            AsyncConnection.receiveDone = new ManualResetEvent(false);
-
-            // Send parameters to the Aneka Server
-            AsyncConnection.Send(requestQuery);
-            AsyncConnection.sendDone.WaitOne();
-            // Send tasks sending completed
-            AsyncConnection.Send("EOF");
-            AsyncConnection.sendDone.WaitOne();
-
-            // Write the response to the cell in excel
-            Excel.Worksheet activeWorksheet = ((Excel.Worksheet)Application.ActiveSheet);
-            while (true)
-            {
-                // Receive the result from the server
-                AsyncConnection.Receive();
-                AsyncConnection.receiveDone.WaitOne();
-
-                if (AsyncConnection.response == "EOF")
-                {
-                    break;
-                }
-                try
-                {
-                    JObject responseObj = JObject.Parse(AsyncConnection.response);
-                    int taskID = Convert.ToInt32(Regex.Match((string)responseObj["taskID"], @"\d+").Value);
-                    string value = (string)responseObj["result"];
-
-                    outputCell = (Excel.Range)outputCells.Item[taskID];
-
-                    Excel.Range outputRange = activeWorksheet.get_Range(outputCell.Address);
-                    outputRange.Value2 = value;
-                }
-                catch (Newtonsoft.Json.JsonReaderException jre)
-                {
-                    Console.WriteLine("JsonReader Exception: " + jre.ToString());
-                }
-            }
-
-            // Display the task completion notification
-            addInSettings.setNotification(2);
-
-            // Release the socket
-            AsyncConnection.CloseConnection();*/
-        }
-
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
         {
         }
@@ -99,7 +48,7 @@ namespace ExcelCloudAddIn
             this.Startup += new System.EventHandler(ThisAddIn_Startup);
             this.Shutdown += new System.EventHandler(ThisAddIn_Shutdown);
         }
-        
+
         #endregion
     }
 }
