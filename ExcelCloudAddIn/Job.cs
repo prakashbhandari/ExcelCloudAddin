@@ -35,7 +35,6 @@ namespace ExcelCloudAddIn
         public void SubmitJob()
         {
             AsyncConnection.sendDone = new ManualResetEvent(false);
-            AsyncConnection.receiveDone = new ManualResetEvent(false);
 
             new AsyncConnection();
             AsyncConnection.StartClient(serverDetails["host"], Int32.Parse(serverDetails["port"]));
@@ -52,6 +51,9 @@ namespace ExcelCloudAddIn
 
             while (true)
             {
+                AsyncConnection.receiveDone = new ManualResetEvent(false);
+
+                int taskID = 0;
                 // Receive the result from the server
                 AsyncConnection.Receive();
                 AsyncConnection.receiveDone.WaitOne();
@@ -59,19 +61,18 @@ namespace ExcelCloudAddIn
                 if (AsyncConnection.response.Equals("EOF"))
                 {
                     break;
-                    AsyncConnection.receiveDone.Set();
                 }
                 try
                 {
                     JObject responseObj = JObject.Parse(AsyncConnection.response);
-                    int taskID = Convert.ToInt32(Regex.Match((string)responseObj["taskID"], @"\d+").Value);
+                    taskID = Convert.ToInt32(Regex.Match((string)responseObj["taskID"], @"\d+").Value);
                     string taskOutput = (string)responseObj["result"];
 
                     outputCell = (Excel.Range)this.outputRange.Item[taskID];
                     outputCell.Value2 = taskOutput;
                     FrmSettings.UpdateProgress();
                 }
-                catch (Newtonsoft.Json.JsonReaderException jre)
+                catch (JsonReaderException jre)
                 {
                     Debug.WriteLine("JsonReader Exception: " + jre.ToString());
                 }

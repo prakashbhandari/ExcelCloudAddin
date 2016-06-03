@@ -104,6 +104,7 @@ namespace ExcelCloudAddIn
 
                 // Begin receiving the response from the server
                 client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReceiveCallBack), state);
+                receiveDone.WaitOne();
             }
             catch (Exception e)
             {
@@ -133,7 +134,7 @@ namespace ExcelCloudAddIn
             }
             catch (ObjectDisposedException ode)
             {
-                //Debug.WriteLine(e.ToString());
+                Debug.WriteLine(ode.ToString());
             }
         }
 

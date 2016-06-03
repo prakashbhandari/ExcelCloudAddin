@@ -27,13 +27,36 @@
     <NoStandardLibraries>false</NoStandardLibraries>
     <RootNamespace>ExcelCloudAddIn</RootNamespace>
     <AssemblyName>ExcelCloudAddIn</AssemblyName>
-    <LoadBehavior>3</LoadBehavior>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <DefineConstants>VSTO40</DefineConstants>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <BootstrapperComponentsLocation>HomeSite</BootstrapperComponentsLocation>
+    <PublishUrl>publish\</PublishUrl>
+    <InstallUrl />
+    <TargetCulture>en</TargetCulture>
+    <ApplicationVersion>1.0.0.0</ApplicationVersion>
+    <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>days</UpdateIntervalUnits>
+    <IsWebBootstrapper>False</IsWebBootstrapper>
+    <ProductName>ExcelCloudAddIn</ProductName>
+    <PublisherName />
+    <SupportUrl />
+    <FriendlyName>ExcelCloudAddIn</FriendlyName>
+    <OfficeApplicationDescription />
+    <LoadBehavior>3</LoadBehavior>
   </PropertyGroup>
   <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.VSTORuntime.4.0">
       <Visible>False</Visible>
       <ProductName>Microsoft Visual Studio 2010 Tools for Office Runtime %28x86 and x64%29</ProductName>
@@ -74,7 +97,7 @@
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
-    <DefineConstants>VSTO40;DEBUG</DefineConstants>
+    <DefineConstants>DEBUG;VSTO40</DefineConstants>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <!--
@@ -173,6 +196,9 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <EmbeddedResource Include="FrmSettings.resx">
+      <DependentUpon>FrmSettings.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ManageTaskPaneRibbon.resx">
       <DependentUpon>ManageTaskPaneRibbon.cs</DependentUpon>
     </EmbeddedResource>
