@@ -32,7 +32,7 @@ namespace ExcelCloudAddIn
         /// <summary>
         /// List of all the executable task files
         /// </summary>
-        public IDictionary<string, string> taskFiles = new Dictionary<string, string>();
+        public List<string> taskFiles = new List<string>();
         /// <summary>
         /// Job Execution type: required at server to prepare job arguments
         /// </summary>

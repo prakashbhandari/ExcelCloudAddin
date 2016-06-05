@@ -208,7 +208,7 @@ namespace ExcelCloudAddIn
                 {
                     if (dr.Cells["taskPath"].Value != null)
                     {
-                        job.taskFiles[dr.Cells["taskName"].Value.ToString()] = dr.Cells["taskPath"].Value.ToString();
+                        job.taskFiles.Add(dr.Cells["taskName"].Value.ToString());
                     }
                 }
                 job.jobExecution = this.comboJobExecution.Text;
@@ -256,6 +256,9 @@ namespace ExcelCloudAddIn
                     frmSettings.lblNotification.Text = "Please complete all fields before submitting job.";
                     break;
                 case 1:
+                    Int32 start_unixTimestamp = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+                    Debug.WriteLine("Start time:"+start_unixTimestamp);
+
                     frmSettings.lblNotification.ForeColor = System.Drawing.Color.Blue;
                     frmSettings.lblNotification.Text = "Preparing job...";
                     break;
@@ -296,6 +299,8 @@ namespace ExcelCloudAddIn
                         }
                         ToggleProgress(false);
                     }
+                    Int32 end_unixTimestamp = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+                    Debug.WriteLine("End time:" + end_unixTimestamp);
                     break;
                 case 4:
                     if (frmSettings.lblNotification.InvokeRequired)
