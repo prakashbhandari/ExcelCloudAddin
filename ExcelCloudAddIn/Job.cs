@@ -122,12 +122,14 @@ namespace ExcelCloudAddIn
                 // All data has been received, stop listening 
                 if (AsyncConnection.response.Equals("EOF"))
                 {
+                    // Display the task completion notification
+                    FrmSettings.SetStatus(3);
                     break;
                 }
                 // Error has occured at server. Update status and stop listening
                 else if (AsyncConnection.response.IndexOf("Error encountered") > -1)
                 {
-                    FrmSettings.SetStatus(4);
+                    FrmSettings.SetStatus(4, AsyncConnection.response);
                     break;
                 }
                 try
@@ -150,9 +152,6 @@ namespace ExcelCloudAddIn
                     Debug.WriteLine("JsonReader Exception: " + jre.ToString());
                 }
             }
-
-            // Display the task completion notification
-            FrmSettings.SetStatus(3);
 
             // Release the socket
             AsyncConnection.CloseConnection();

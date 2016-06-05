@@ -247,7 +247,7 @@ namespace ExcelCloudAddIn
         /// based on the status code received
         /// </summary>
         /// <param name="status">Status code: 0 to 5</param>
-        public static void SetStatus(int status)
+        public static void SetStatus(int status, string message = "")
         {
             switch (status)
             {
@@ -298,8 +298,20 @@ namespace ExcelCloudAddIn
                     }
                     break;
                 case 4:
-                    frmSettings.lblNotification.ForeColor = System.Drawing.Color.Red;
-                    frmSettings.lblNotification.Text = "Error encountered - Check server log for more information.";
+                    if (frmSettings.lblNotification.InvokeRequired)
+                    {
+                        frmSettings.lblNotification.Invoke(new MethodInvoker(delegate { frmSettings.lblNotification.ForeColor = System.Drawing.Color.Red; }));
+
+                        frmSettings.lblNotification.Invoke(new MethodInvoker(delegate
+                        {
+                            frmSettings.lblNotification.Text = (!message.Equals("")) ? message : "Error encountered - Check server log for more information.";
+                        }));
+                    }
+                    else
+                    {
+                        frmSettings.lblNotification.ForeColor = System.Drawing.Color.Red;
+                        frmSettings.lblNotification.Text = (!message.Equals("")) ? message : "Error encountered - Check server log for more information.";
+                    }
                     ToggleProgress(false);
                     break;
                 case 5:

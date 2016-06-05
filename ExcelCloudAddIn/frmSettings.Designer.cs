@@ -319,7 +319,6 @@
             this.txtAnekaHost.Name = "txtAnekaHost";
             this.txtAnekaHost.Size = new System.Drawing.Size(147, 20);
             this.txtAnekaHost.TabIndex = 7;
-            this.txtAnekaHost.Text = "10.0.2.15";
             // 
             // lblAnekaPort
             // 
@@ -346,7 +345,6 @@
             this.txtAnekaPassword.PasswordChar = '*';
             this.txtAnekaPassword.Size = new System.Drawing.Size(100, 20);
             this.txtAnekaPassword.TabIndex = 3;
-            this.txtAnekaPassword.Text = "prakash191";
             // 
             // txtAnekaUsername
             // 
@@ -354,7 +352,6 @@
             this.txtAnekaUsername.Name = "txtAnekaUsername";
             this.txtAnekaUsername.Size = new System.Drawing.Size(100, 20);
             this.txtAnekaUsername.TabIndex = 2;
-            this.txtAnekaUsername.Text = "prakashbhandari";
             // 
             // lblAnekaPassword
             // 
@@ -411,7 +408,6 @@
             this.txtHost.Name = "txtHost";
             this.txtHost.Size = new System.Drawing.Size(157, 20);
             this.txtHost.TabIndex = 22;
-            this.txtHost.Text = "10.0.2.15";
             // 
             // label3
             // 
