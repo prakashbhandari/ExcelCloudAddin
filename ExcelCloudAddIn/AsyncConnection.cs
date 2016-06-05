@@ -1,4 +1,11 @@
-﻿using System;
+﻿//Title        :  AsyncConnection.cs
+//Package      :  ExcelCloudAddIn
+//Project      :  ExcelCloud
+//Description  :  Provides connection to server, to send and receive data.
+//Created on   :  June 5, 2016
+//Author	   :  Prakash Bhandari
+
+using System;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
@@ -7,14 +14,42 @@ using System.Diagnostics;
 
 namespace ExcelCloudAddIn
 {
+    /// <summary>
+    /// Class AsyncConnection: Provides an asynchronous Socket
+    /// connection to server for sending and receiving data
+    /// </summary>
     class AsyncConnection
     {
+        /// <summary>
+        /// reset event to signal once connection is done
+        /// </summary>
         public static ManualResetEvent connectDone = new ManualResetEvent(false);
+        /// <summary>
+        /// reset event to signal once sending is done
+        /// </summary>
         public static ManualResetEvent sendDone = new ManualResetEvent(false);
+        /// <summary>
+        /// reset event to signal once receiving is done
+        /// </summary>
         public static ManualResetEvent receiveDone = new ManualResetEvent(false);
-        public static String response = String.Empty;
+        /// <summary>
+        /// response received from server
+        /// </summary>
+        public static string response = String.Empty;
+        /// <summary>
+        /// hold the instance of client socket
+        /// </summary>
         private static Socket client;
+        /// <summary>
+        /// Sets connection status to true if connected to server
+        /// </summary>
+        public static bool connectionStatus = false;
 
+        /// <summary>
+        /// Connect to server using the host and port
+        /// </summary>
+        /// <param name="host">Domain name or IP address of server</param>
+        /// <param name="port">Port number server is listening to</param>
         public static void StartClient(String host, int port)
         {
             try
@@ -40,11 +75,16 @@ namespace ExcelCloudAddIn
             }
             catch (Exception e)
             {
-                FrmSettings.SetStatus(5);
                 Debug.WriteLine(e.ToString());
             }
         }
 
+        /// <summary>
+        /// Asynchronously try to connect to the server,
+        /// if connection can't be made simply trigger 
+        /// status update to connection can't be made
+        /// </summary>
+        /// <param name="ar">Async Result</param>
         private static void ConnectCallback(IAsyncResult ar)
         {
             try
@@ -55,16 +95,20 @@ namespace ExcelCloudAddIn
                 // Complete the connection
                 client.EndConnect(ar);
                 Debug.WriteLine("Socket connected to: " + client.RemoteEndPoint.ToString());
-                connectDone.Set();
+                connectionStatus = true;
             }
             catch (Exception e)
             {
-                FrmSettings.SetStatus(5);
-                Debug.WriteLine(e.ToString());
+                Debug.WriteLine("Server not available: "+e.ToString());
             }
+            connectDone.Set();
         }
 
-        public static void Send(String data)
+        /// <summary>
+        /// Receives a string data and tries sending the bytes through socket
+        /// </summary>
+        /// <param name="data">string data to be sent</param>
+        public static void Send(string data)
         {
             // Convert string data to byte data using ASCII encoding
             byte[] byteData = Encoding.ASCII.GetBytes(data);
@@ -74,6 +118,8 @@ namespace ExcelCloudAddIn
             Debug.WriteLine("Sending: " + data);
         }
 
+        // Asynchronous try sending the data, raise error
+        // if cannot send data
         private static void SendCallBack(IAsyncResult ar)
         {
             try
@@ -94,6 +140,9 @@ namespace ExcelCloudAddIn
             }
         }
 
+        /// <summary>
+        /// Try receiving data through the socket
+        /// </summary>
         public static void Receive()
         {
             try
@@ -112,6 +161,11 @@ namespace ExcelCloudAddIn
             }
         }
 
+        /// <summary>
+        /// Asynchronously receive any data from the socket. 
+        /// Once all data is received assign it to response. 
+        /// </summary>
+        /// <param name="ar"></param>
         private static void ReceiveCallBack(IAsyncResult ar)
         {
             try
@@ -138,6 +192,10 @@ namespace ExcelCloudAddIn
             }
         }
 
+        /// <summary>
+        /// Close connetion to server once all data has been
+        /// received and a connection close EOF message received
+        /// </summary>
         public static void CloseConnection()
         {
             client.Shutdown(SocketShutdown.Both);

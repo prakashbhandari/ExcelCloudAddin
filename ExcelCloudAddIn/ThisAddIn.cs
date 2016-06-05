@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Threading;
-using Excel = Microsoft.Office.Interop.Excel;
-using System.Text.RegularExpressions;
 
 namespace ExcelCloudAddIn
 {
